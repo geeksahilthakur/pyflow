@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Flowchart Generator</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #2c3e50;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        .input-section, .chart-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-section {
+            flex: 1;
+        }
+
+        .chart-section {
+            flex: 2;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #codeForm {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            resize: vertical;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #chart {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: auto; /* Ensure overflow is visible */
+        }
+
+        .node rect {
+            stroke: #4a90e2;
+            fill: #fff;
+            stroke-width: 2px;
+            rx: 5;
+            ry: 5;
+            transition: all 0.3s ease;
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.2));
+        }
+
+        .node text {
+            font: 12px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            fill: #333;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            stroke: #4a90e2;
+            stroke-width: 3px;
+            opacity: 1;
+        }
+
+        .node:hover rect {
+            transform: scale(1.05);
+            filter: drop-shadow(5px 5px 8px rgba(0,0,0,0.3));
+        }
+
+        .node:hover text {
+            font-weight: bold;
+        }
+
+        .decision { fill: #ffcc00; stroke: #b8860b; }
+        .return { fill: #90ee90; stroke: #006400; }
+        .start-end { fill: #ff9999; stroke: #ff0000; }
+        .flow-arrow { fill: #4a90e2; }
+
+        #downloadBtn {
+            margin-top: 1rem;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                flex-direction : column;
+            }
+
+            .input-section, .chart-section {
+                flex: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/path/to/your/logo.png" alt="FlowChart Pro Logo" class="logo">
+    </header>
+    <main>
+        <section class="input-section">
+            <label for="code">This is a text area:</label>
+            <form id="codeForm">
+                <textarea id="code" placeholder="Enter your Python code here..."></textarea>
+                <button type="submit">Generate Flowchart</button>
+            </form>
+        </section>
+        <section class="chart-section">
+            <label for="chart">Your flowchart goes here:</label>
+            <div id="chart"></div>
+            <button id="downloadBtn" style="display: none;">Download PNG</button>
+        </section>
+    </main>
+    <footer>
+        <h2>PythonFlow by Geeksahil </h2>
+        <p>Transform your Python code into beautiful, interactive flowcharts with ease. Perfect for documentation, presentations, and understanding complex algorithms.</p>
+    </footer>
+
+    <script>
+        document.getElementById('codeForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `code=${encodeURIComponent(code)}`
+            });
+
+            const flowchartData = await response.json();
+            drawChart(flowchartData);
+        };
+
+        function drawChart(data) {
+            d3.select("#chart").selectAll("*").remove();
+
+            const margin = {top: 40, right: 90, bottom: 50, left: 90};
+            const width = 1000;
+            const height = 800;
+
+            const svg = d3.select("#chart").append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const zoom = d3.zoom()
+                .scaleExtent([0.5, 2]) // Set zoom limits
+                .on("zoom", function(event) {
+                    svg.attr("transform", event.transform);
+                });
+
+            svg.call(zoom);
+
+            const root = d3.hierarchy({name: "Root", children: data});
+            const treeLayout = d3.tree().size([height - margin.top - margin.bottom, width - margin.left - margin.right]);
+            treeLayout(root);
+
+            // Define arrow marker
+            svg.append("defs").append("marker")
+                .attr("id", "arrowhead")
+                .attr("viewBox", "-0 -5 10 10")
+                .attr("refX", 20)
+                .attr("refY", 0)
+                .attr("orient", "auto")
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("xoverflow", "visible")
+                .append("path")
+                .attr("d", "M 0,-5 L 10 ,0 L 0,5")
+                .attr("class", "flow-arrow")
+                .style("stroke", "none");
+
+            // Draw enhanced links
+            svg.selectAll(".link")
+                .data(root.links())
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.linkHorizontal()
+                    .x(d => d.y)
+                    .y(d => d.x))
+                .attr("marker-end", "url(#arrowhead)");
+
+            // Draw enhanced nodes
+            const node = svg.selectAll(".node")
+                .data(root.descendants())
+                .enter().append("g")
+                .attr("class", "node")
+                .attr("transform", d => `translate(${d.y},${d.x})`);
+
+            // Add 3D effect
+            node.append("rect")
+                .attr("width", d => Math.max(100, d.data.name.length * 8 + 20))
+                .attr("height", 30)
+                .attr("fill", "rgba(0,0,0,0.1)")
+                .attr("transform", "translate(3, 3)")
+                .style("filter", "blur(2px)");
+
+            // Main rectangle
+            node.append("rect")
+                .attr("width", d => Math.max(100, d.data.name.length * 8 + 20))
+                .attr("height", 30)
+                .attr("class", d => {
+                    if (d.data.name.startsWith('Decision :')) return 'decision';
+                    if (d.data.name.startsWith('Return:')) return 'return';
+                    if (d.data.name.startsWith('Start Function:') || d.data.name.startsWith('End Function:')) return 'start-end';
+                    return '';
+                });
+
+            // Text label
+            node.append("text")
+                .attr("dy", "1.2em")
+                .attr("x", 6)
+                .attr("text-anchor", "start")
+                .text(d => d.data.name);
+
+            // Show download button
+            document.getElementById('downloadBtn').style.display = 'block';
+        }
+
+        document.getElementById('downloadBtn').onclick = () => {
+            const chartDiv = document.getElementById("chart"); // Target the chart div
+            html2canvas(chartDiv).then(canvas => { // Capture the chart div
+                const imgData = canvas.toDataURL("image/png");
+                const downloadLink = document.createElement("a");
+                downloadLink.href = imgData;
+                downloadLink.download = "flowchart.png";
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            });
+        };
+    </script>
+</body>
+</html>
+
