@@ -3,24 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Flowchart Generator</title>
+    <title>pyflow - Professional Flowchart Generator</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #FFD700;
+            --text-color: #333333;
+            --background-color: #F5F5F5;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
+            background-color: var(--background-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"%3E%3Cg fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath opacity=".5" d="M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z"/%3E%3Cpath d="M6 5V0H5v5H0v1h5v94h1V6h94V5H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
         }
 
         header {
             background-color: #ffffff;
             padding: 1rem;
             text-align: center;
+            box-shadow: var(--box-shadow);
         }
 
         .logo {
@@ -30,27 +41,41 @@
 
         main {
             display: flex;
+            flex-direction: column;
             flex: 1;
             padding: 2rem;
             gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .input-section, .chart-section {
+        .input-section, .output-section, .chart-section, .algorithm-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .output-section {
             display: flex;
-            flex-direction: column;
+            gap: 2rem;
         }
 
-        .input-section {
+        .chart-section, .algorithm-section {
             flex: 1;
+            min-width: 0;
         }
 
-        .chart-section {
-            flex: 2;
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
         }
 
         label {
             font-weight: bold;
             margin-bottom: 0.5rem;
+            display: block;
         }
 
         #codeForm {
@@ -61,7 +86,7 @@
 
         textarea {
             width: 100%;
-            height: 300px;
+            height: 200px;
             resize: vertical;
             padding: 0.5rem;
             border: 1px solid #ccc;
@@ -71,116 +96,119 @@
 
         button {
             padding: 0.5rem 1rem;
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: 1rem;
         }
 
         button:hover {
-            background-color: #2980b9;
+            background-color: #3A7BC8;
         }
 
         #chart {
             width: 100%;
-            height: 100%;
-            min-height: 400px;
+            height: 600px;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: auto; /* Ensure overflow is visible */
+            overflow: auto;
+            border: 1px solid #e0e0e0;
         }
 
         .node rect {
-            stroke: #4a90e2;
-            fill: #fff;
+            fill: var(--secondary-color);
+            stroke: #E3B900;
             stroke-width: 2px;
-            rx: 5;
-            ry: 5;
-            transition: all 0.3s ease;
-            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.2));
+            rx: 10;
+            ry: 10;
         }
 
         .node text {
-            font: 12px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            fill: #333;
-            transition: all 0.3s ease;
-            pointer-events: none;
+            font: 14px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            fill: var(--text-color);
+            text-anchor: middle;
+            dominant-baseline: middle;
         }
 
         .link {
             fill: none;
-            stroke: #ccc;
+            stroke: var(--primary-color);
             stroke-width: 2px;
-            opacity: 0.7;
-            transition: all 0.3s ease;
         }
 
-        .link:hover {
-            stroke: #4a90e2;
-            stroke-width: 3px;
-            opacity: 1;
+        .node-shadow {
+            fill: #E3B900;
         }
-
-        .node:hover rect {
-            transform: scale(1.05);
-            filter: drop-shadow(5px 5px 8px rgba(0,0,0,0.3));
-        }
-
-        .node:hover text {
-            font-weight: bold;
-        }
-
-        .decision { fill: #ffcc00; stroke: #b8860b; }
-        .return { fill: #90ee90; stroke: #006400; }
-        .start-end { fill: #ff9999; stroke: #ff0000; }
-        .flow-arrow { fill: #4a90e2; }
 
         #downloadBtn {
             margin-top: 1rem;
         }
 
+        #output-format {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            background-color: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
         footer {
-            background-color: #2c3e50;
+            background-color: #333333;
             color: white;
             padding: 2rem;
             text-align: center;
         }
 
+        @media (max-width: 1024px) {
+            .output-section {
+                flex-direction: column;
+            }
+        }
+
         @media (max-width: 768px) {
             main {
-                flex-direction : column;
+                padding: 1rem;
             }
 
-            .input-section, .chart-section {
-                flex: none;
-                width: 100%;
+            .input-section, .output-section, .chart-section, .algorithm-section {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='images/pyflow.png') }}" alt="FlowChart Pro Logo" class="logo">
+        <img src="{{ url_for('static', filename='images/pyflow.png') }}" alt="pyflow Logo" class="logo">
     </header>
     <main>
         <section class="input-section">
-            <label for="code">This is a text area:</label>
+            <h2>Generate Your Flowchart</h2>
             <form id="codeForm">
+                <label for="code">Enter your Python code:</label>
                 <textarea id="code" placeholder="Enter your Python code here..."></textarea>
                 <button type="submit">Generate Flowchart</button>
             </form>
         </section>
-        <section class="chart-section">
-            <label for="chart">Your flowchart goes here:</label>
-            <div id="chart"></div>
-            <button id="downloadBtn" style="display: none;">Download PNG</button>
-        </section>
+        <div class="output-section">
+            <section class="chart-section">
+                <h2>Your Flowchart</h2>
+                <div id="chart"></div>
+                <button id="downloadBtn" style="display: none;">Download PNG</button>
+            </section>
+            <section class="algorithm-section">
+                <h2>Algorithm</h2>
+                <pre id="output-format"></pre>
+            </section>
+        </div>
     </main>
     <footer>
-        <h2>PythonFlow by Geeksahil </h2>
+        <h2>pyflow by Geeksahil</h2>
         <p>Transform your Python code into beautiful, interactive flowcharts with ease. Perfect for documentation, presentations, and understanding complex algorithms.</p>
     </footer>
 
@@ -197,16 +225,17 @@
                 body: `code=${encodeURIComponent(code)}`
             });
 
-            const flowchartData = await response.json();
-            drawChart(flowchartData);
+            const data = await response.json();
+            drawChart(data.flowchart_data);
+            document.getElementById('output-format').textContent = data.output_format;
         };
 
         function drawChart(data) {
             d3.select("#chart").selectAll("*").remove();
 
             const margin = {top: 40, right: 90, bottom: 50, left: 90};
-            const width = 1000;
-            const height = 800;
+            const width = 2000;
+            const height = 1500;
 
             const svg = d3.select("#chart").append("svg")
                 .attr("width", "100%")
@@ -216,15 +245,15 @@
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
             const zoom = d3.zoom()
-                .scaleExtent([0.5, 2]) // Set zoom limits
+                .scaleExtent([0.1, 4])
                 .on("zoom", function(event) {
                     svg.attr("transform", event.transform);
                 });
 
-            svg.call(zoom);
+            d3.select("#chart").call(zoom);
 
             const root = d3.hierarchy({name: "Root", children: data});
-            const treeLayout = d3.tree().size([height - margin.top - margin.bottom, width - margin.left - margin.right]);
+            const treeLayout = d3.tree().size([height - margin.top - margin.bottom, (width - margin.left - margin.right) * 0.8]);
             treeLayout(root);
 
             // Define arrow marker
@@ -239,10 +268,10 @@
                 .attr("xoverflow", "visible")
                 .append("path")
                 .attr("d", "M 0,-5 L 10 ,0 L 0,5")
-                .attr("class", "flow-arrow")
+                .attr("fill", "#4A90E2")
                 .style("stroke", "none");
 
-            // Draw enhanced links
+            // Draw links with arrows
             svg.selectAll(".link")
                 .data(root.links())
                 .enter().append("path")
@@ -252,46 +281,61 @@
                     .y(d => d.x))
                 .attr("marker-end", "url(#arrowhead)");
 
-            // Draw enhanced nodes
+            // Draw nodes
             const node = svg.selectAll(".node")
                 .data(root.descendants())
                 .enter().append("g")
                 .attr("class", "node")
                 .attr("transform", d => `translate(${d.y},${d.x})`);
 
-            // Add 3D effect
+            // Add 3D shadow effect
             node.append("rect")
-                .attr("width", d => Math.max(100, d.data.name.length * 8 + 20))
-                .attr("height", 30)
-                .attr("fill", "rgba(0,0,0,0.1)")
-                .attr("transform", "translate(3, 3)")
-                .style("filter", "blur(2px)");
+
+                .attr("class", "node-shadow")
+                .attr("width", 180)
+                .attr("height", 60)
+                .attr("x", 5)
+                .attr("y", 5)
+                .attr("rx", 10)
+                .attr("ry", 10);
 
             // Main rectangle
             node.append("rect")
-                .attr("width", d => Math.max(100, d.data.name.length * 8 + 20))
-                .attr("height", 30)
-                .attr("class", d => {
-                    if (d.data.name.startsWith('Decision :')) return 'decision';
-                    if (d.data.name.startsWith('Return:')) return 'return';
-                    if (d.data.name.startsWith('Start Function:') || d.data.name.startsWith('End Function:')) return 'start-end';
-                    return '';
-                });
+                .attr("width", 180)
+                .attr("height", 60)
+                .attr("rx", 10)
+                .attr("ry", 10);
 
             // Text label
             node.append("text")
-                .attr("dy", "1.2em")
-                .attr("x", 6)
-                .attr("text-anchor", "start")
+                .attr("x", 90)
+                .attr("y", 30)
                 .text(d => d.data.name);
 
             // Show download button
             document.getElementById('downloadBtn').style.display = 'block';
+
+            // Center the initial view
+            const chartElement = document.getElementById("chart");
+            const svgElement = chartElement.querySelector("svg");
+            const svgWidth = svgElement.getBoundingClientRect().width;
+            const svgHeight = svgElement.getBoundingClientRect().height;
+            const scale = Math.min(chartElement.clientWidth / svgWidth, chartElement.clientHeight / svgHeight) * 0.9;
+            const translateX = (chartElement.clientWidth - svgWidth * scale) / 2;
+            const translateY = (chartElement.clientHeight - svgHeight * scale) / 2;
+            zoom.transform(d3.select("#chart"), d3.zoomIdentity.translate(translateX, translateY).scale(scale));
         }
 
         document.getElementById('downloadBtn').onclick = () => {
-            const chartDiv = document.getElementById("chart"); // Target the chart div
-            html2canvas(chartDiv).then(canvas => { // Capture the chart div
+            const chartDiv = document.getElementById("chart");
+            html2canvas(chartDiv).then(canvas => {
+                // Add watermark
+                const ctx = canvas.getContext("2d");
+                ctx.font = "bold 16px Arial";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                ctx.textAlign = "right";
+                ctx.fillText("pyflow by Geeksahil", canvas.width - 10, canvas.height - 10);
+
                 const imgData = canvas.toDataURL("image/png");
                 const downloadLink = document.createElement("a");
                 downloadLink.href = imgData;
@@ -304,4 +348,3 @@
     </script>
 </body>
 </html>
-
