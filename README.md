@@ -24,8 +24,7 @@ Our goal is to bridge the gap between textual code and visual comprehension, mak
 - **Responsive Design**: Enjoy a seamless experience across desktop and mobile devices.
 
 ## Screenshot
-
-![pyflow Screenshot](static/images/pyflow_screenshot.png)
+![pyflowss](https://github.com/user-attachments/assets/c83ef6ab-345c-4bca-b1a6-7378d8c28153)
 
 ## How It Works
 
